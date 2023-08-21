@@ -13,8 +13,8 @@ public class AccountPage {
         return webDriver.findElement(By.xpath("//button[contains(text(),'Deposit')]"));
     }
 
-    public WebElement depositInput() {
-        return webDriver.findElement(By.xpath("//input[@label='Amount to be Deposited :']"));
+    public WebElement withdrawlButton() {
+        return webDriver.findElement(By.xpath("//button[contains(text(),'Withdrawl')]"));
     }
 
     public int balance() {

@@ -8,6 +8,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.simbirsoft.bankingproject.config.SeleniumConfig;
 import org.simbirsoft.bankingproject.forms.DepositForm;
+import org.simbirsoft.bankingproject.forms.WithdrawlForm;
 import org.simbirsoft.bankingproject.pages.AccountPage;
 import org.simbirsoft.bankingproject.pages.CustomerLoginPage;
 import org.simbirsoft.bankingproject.pages.LoginPage;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.MethodOrderer.*;
 @TestMethodOrder(OrderAnnotation.class)
 public class LoginTest {
     private static WebDriver chromeDriver;
+    private static int fibonacci;
 
     @BeforeAll
     public static void setUp() throws MalformedURLException {
@@ -59,16 +61,28 @@ public class LoginTest {
     @Order(2)
     public void depositTest() throws InterruptedException {
         AccountPage accountPage = new AccountPage(chromeDriver);
-        Thread.sleep(3000);
         accountPage.depositButton().click();
         Thread.sleep(3000);
         DepositForm depositForm = new DepositForm(chromeDriver);
         int dayOfMonth = LocalDateTime.now().getDayOfMonth();
-        int fibonacci = fib(dayOfMonth);
+        fibonacci = fib(dayOfMonth);
         depositForm.getAmountInput().sendKeys(String.valueOf(fibonacci));
         depositForm.getDepositButton().click();
         Thread.sleep(3000);
         Assertions.assertThat(accountPage.balance()).isEqualTo(fibonacci);
+    }
+
+    @Test
+    @Order(3)
+    public void withdrawlTest() throws InterruptedException {
+        AccountPage accountPage = new AccountPage(chromeDriver);
+        accountPage.withdrawlButton().click();
+        Thread.sleep(3000);
+        WithdrawlForm withdrawlForm = new WithdrawlForm(chromeDriver);
+        withdrawlForm.getAmountInput().sendKeys(String.valueOf(fibonacci));
+        withdrawlForm.getWithdrawlButton().click();
+        Thread.sleep(3000);
+        Assertions.assertThat(accountPage.balance()).isEqualTo(0);
     }
 
     private static int fib(int n)
