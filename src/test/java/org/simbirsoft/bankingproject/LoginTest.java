@@ -3,7 +3,6 @@ package org.simbirsoft.bankingproject;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.simbirsoft.bankingproject.config.SeleniumConfig;
@@ -14,9 +13,12 @@ import org.simbirsoft.bankingproject.pages.AccountPage;
 import org.simbirsoft.bankingproject.pages.CustomerLoginPage;
 import org.simbirsoft.bankingproject.pages.LoginPage;
 import org.simbirsoft.bankingproject.pages.TransactionsPage;
+import org.simbirsoft.bankingproject.utils.Files;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +30,7 @@ import static org.junit.jupiter.api.MethodOrderer.*;
 public class LoginTest {
     private static WebDriver chromeDriver;
     private static int fibonacci;
+    private static List<Transaction> transactions;
 
     @BeforeAll
     public static void setUp() throws MalformedURLException {
@@ -39,8 +42,9 @@ public class LoginTest {
     }
 
     @AfterAll
-    public static void tearDown() {
+    public static void tearDown() throws IOException {
         chromeDriver.quit();
+        Files.writeTransactionsInCSV(transactions, Path.of("./report.csv"));
     }
 
     @Test
@@ -94,8 +98,9 @@ public class LoginTest {
         AccountPage accountPage = new AccountPage(chromeDriver);
         accountPage.transactionsButton().click();
         Thread.sleep(3000);
+        Assertions.assertThat(chromeDriver.getCurrentUrl()).isEqualTo("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/listTx");
         TransactionsPage transactionsPage = new TransactionsPage(chromeDriver);
-        List<Transaction> transactions = transactionsPage.transactions();
+        transactions = transactionsPage.transactions();
         Assertions.assertThat(transactions).hasSize(2);
     }
 
