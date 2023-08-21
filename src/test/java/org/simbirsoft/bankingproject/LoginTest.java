@@ -1,5 +1,6 @@
 package org.simbirsoft.bankingproject;
 
+import io.qameta.allure.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
@@ -18,7 +19,6 @@ import org.simbirsoft.bankingproject.utils.Files;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +27,8 @@ import static org.junit.jupiter.api.MethodOrderer.*;
 
 
 @TestMethodOrder(OrderAnnotation.class)
+@Epic("Login Tests Epic")
+@Feature("Valid Harry Potter login")
 public class LoginTest {
     private static WebDriver chromeDriver;
     private static int fibonacci;
@@ -44,11 +46,12 @@ public class LoginTest {
     @AfterAll
     public static void tearDown() throws IOException {
         chromeDriver.quit();
-        Files.writeTransactionsInCSV(transactions, Path.of("./report.csv"));
     }
 
     @Test
     @Order(1)
+    @Story("Harry Potter tries to login")
+    @Description("Valid login")
     public void customerLoginTest() throws InterruptedException {
         chromeDriver.get(SeleniumConfig.LOGIN_PAGE_URL);
         Thread.sleep(3000);
@@ -66,6 +69,8 @@ public class LoginTest {
 
     @Test
     @Order(2)
+    @Story("Harry Potter tries to deposit fibonacci number")
+    @Description("Successful deposit")
     public void depositTest() throws InterruptedException {
         AccountPage accountPage = new AccountPage(chromeDriver);
         accountPage.depositButton().click();
@@ -81,6 +86,8 @@ public class LoginTest {
 
     @Test
     @Order(3)
+    @Story("Harry Potter tries to withdraw fibonacci number")
+    @Description("Successful withdraw")
     public void withdrawlTest() throws InterruptedException {
         AccountPage accountPage = new AccountPage(chromeDriver);
         accountPage.withdrawlButton().click();
@@ -94,7 +101,9 @@ public class LoginTest {
 
     @Test
     @Order(4)
-    public void transactionsTest() throws InterruptedException {
+    @Story("Harry Potter tries to get all transactions in account")
+    @Description("Transactions successfully received")
+    public void transactionsTest() throws InterruptedException, IOException {
         AccountPage accountPage = new AccountPage(chromeDriver);
         accountPage.transactionsButton().click();
         Thread.sleep(3000);
@@ -102,8 +111,13 @@ public class LoginTest {
         TransactionsPage transactionsPage = new TransactionsPage(chromeDriver);
         transactions = transactionsPage.transactions();
         Assertions.assertThat(transactions).hasSize(2);
+        transactionsListAttachment();
     }
 
+    @Attachment(value = "Transactions list", type = "text/csv", fileExtension = ".csv")
+    public String transactionsListAttachment() throws IOException {
+        return Files.writeTransactionsInCSV(transactions);
+    }
     private static int fib(int n) {
         int a = 0, b = 1, c;
         if (n == 0)
