@@ -9,14 +9,17 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.simbirsoft.bankingproject.config.SeleniumConfig;
 import org.simbirsoft.bankingproject.forms.DepositForm;
 import org.simbirsoft.bankingproject.forms.WithdrawlForm;
+import org.simbirsoft.bankingproject.model.Transaction;
 import org.simbirsoft.bankingproject.pages.AccountPage;
 import org.simbirsoft.bankingproject.pages.CustomerLoginPage;
 import org.simbirsoft.bankingproject.pages.LoginPage;
+import org.simbirsoft.bankingproject.pages.TransactionsPage;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.MethodOrderer.*;
 
@@ -85,8 +88,18 @@ public class LoginTest {
         Assertions.assertThat(accountPage.balance()).isEqualTo(0);
     }
 
-    private static int fib(int n)
-    {
+    @Test
+    @Order(4)
+    public void transactionsTest() throws InterruptedException {
+        AccountPage accountPage = new AccountPage(chromeDriver);
+        accountPage.transactionsButton().click();
+        Thread.sleep(3000);
+        TransactionsPage transactionsPage = new TransactionsPage(chromeDriver);
+        List<Transaction> transactions = transactionsPage.transactions();
+        Assertions.assertThat(transactions).hasSize(2);
+    }
+
+    private static int fib(int n) {
         int a = 0, b = 1, c;
         if (n == 0)
             return a;

@@ -17,6 +17,10 @@ public class AccountPage {
         return webDriver.findElement(By.xpath("//button[contains(text(),'Withdrawl')]"));
     }
 
+    public WebElement transactionsButton() {
+        return webDriver.findElement(By.xpath("//button[contains(text(),'Transactions')]"));
+    }
+
     public int balance() {
         return Integer.parseInt(webDriver.findElements(By.xpath("//div[@ng-hide='noAccount']//strong[@class='ng-binding']")).get(1).getText());
     }
