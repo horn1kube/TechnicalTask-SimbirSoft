@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.Select;
 @RequiredArgsConstructor
 public class CustomerLoginPage {
     private final WebDriver webDriver;
+
     public Select selectCustomerButton() {
         return new Select(webDriver.findElement(By.id("userSelect")));
     }
