@@ -1,15 +1,12 @@
 package org.simbirsoft.bankingproject.pages;
 
-import lombok.RequiredArgsConstructor;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import lombok.Getter;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.How;
 
-@RequiredArgsConstructor
-public class LoginPage {
-    private final WebDriver webDriver;
-
-    public WebElement customerLoginButton() {
-        return webDriver.findElement(By.xpath("//button[contains(text(),'Customer Login')]"));
-    }
+@Getter
+public class LoginPage extends BasePage {
+    @FindBy(how = How.XPATH, using = "//button[contains(text(),'Customer Login')]")
+    private WebElement customerLoginButton;
 }

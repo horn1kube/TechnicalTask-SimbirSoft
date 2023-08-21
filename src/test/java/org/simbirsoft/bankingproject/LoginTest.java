@@ -44,7 +44,7 @@ public class LoginTest {
     }
 
     @AfterAll
-    public static void tearDown() throws IOException {
+    public static void tearDown() {
         chromeDriver.quit();
     }
 
@@ -55,14 +55,16 @@ public class LoginTest {
     public void customerLoginTest() throws InterruptedException {
         chromeDriver.get(SeleniumConfig.LOGIN_PAGE_URL);
         Thread.sleep(3000);
-        LoginPage loginPage = new LoginPage(chromeDriver);
-        loginPage.customerLoginButton().click();
+        LoginPage loginPage = new LoginPage();
+        loginPage.init(chromeDriver);
+        loginPage.getCustomerLoginButton().click();
         Thread.sleep(3000);
         Assertions.assertThat(chromeDriver.getCurrentUrl()).isEqualTo("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/customer");
-        CustomerLoginPage customerLoginPage = new CustomerLoginPage(chromeDriver);
+        CustomerLoginPage customerLoginPage = new CustomerLoginPage();
+        customerLoginPage.init(chromeDriver);
         customerLoginPage.selectCustomerButton().selectByVisibleText("Harry Potter");
         Thread.sleep(3000);
-        customerLoginPage.loginButton().click();
+        customerLoginPage.getLoginButton().click();
         Thread.sleep(3000);
         Assertions.assertThat(chromeDriver.getCurrentUrl()).isEqualTo("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/account");
     }
@@ -72,8 +74,9 @@ public class LoginTest {
     @Story("Harry Potter tries to deposit fibonacci number")
     @Description("Successful deposit")
     public void depositTest() throws InterruptedException {
-        AccountPage accountPage = new AccountPage(chromeDriver);
-        accountPage.depositButton().click();
+        AccountPage accountPage = new AccountPage();
+        accountPage.init(chromeDriver);
+        accountPage.getDepositButton().click();
         Thread.sleep(3000);
         DepositForm depositForm = new DepositForm(chromeDriver);
         int dayOfMonth = LocalDateTime.now().getDayOfMonth();
@@ -89,8 +92,9 @@ public class LoginTest {
     @Story("Harry Potter tries to withdraw fibonacci number")
     @Description("Successful withdraw")
     public void withdrawlTest() throws InterruptedException {
-        AccountPage accountPage = new AccountPage(chromeDriver);
-        accountPage.withdrawlButton().click();
+        AccountPage accountPage = new AccountPage();
+        accountPage.init(chromeDriver);
+        accountPage.getWithdrawlButton().click();
         Thread.sleep(3000);
         WithdrawlForm withdrawlForm = new WithdrawlForm(chromeDriver);
         withdrawlForm.getAmountInput().sendKeys(String.valueOf(fibonacci));
@@ -104,11 +108,13 @@ public class LoginTest {
     @Story("Harry Potter tries to get all transactions in account")
     @Description("Transactions successfully received")
     public void transactionsTest() throws InterruptedException, IOException {
-        AccountPage accountPage = new AccountPage(chromeDriver);
-        accountPage.transactionsButton().click();
+        AccountPage accountPage = new AccountPage();
+        accountPage.init(chromeDriver);
+        accountPage.getTransactionsButton().click();
         Thread.sleep(3000);
         Assertions.assertThat(chromeDriver.getCurrentUrl()).isEqualTo("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/listTx");
-        TransactionsPage transactionsPage = new TransactionsPage(chromeDriver);
+        TransactionsPage transactionsPage = new TransactionsPage();
+        transactionsPage.init(chromeDriver);
         transactions = transactionsPage.transactions();
         Assertions.assertThat(transactions).hasSize(2);
         transactionsListAttachment();
@@ -118,10 +124,10 @@ public class LoginTest {
     public String transactionsListAttachment() throws IOException {
         return Files.writeTransactionsInCSV(transactions);
     }
+
     private static int fib(int n) {
         int a = 0, b = 1, c;
-        if (n == 0)
-            return a;
+        if (n == 0) return a;
         for (int i = 2; i <= n; i++) {
             c = a + b;
             a = b;

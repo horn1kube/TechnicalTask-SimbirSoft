@@ -1,8 +1,7 @@
 package org.simbirsoft.bankingproject.pages;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.simbirsoft.bankingproject.model.Transaction;
 import org.simbirsoft.bankingproject.model.TransactionType;
@@ -12,9 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
-@RequiredArgsConstructor
-public class TransactionsPage {
-    private final WebDriver webDriver;
+public class TransactionsPage extends BasePage {
 
     public List<Transaction> transactions() {
         return webDriver.findElements(By.xpath("//table//tbody//tr")).stream().map((elem) -> {

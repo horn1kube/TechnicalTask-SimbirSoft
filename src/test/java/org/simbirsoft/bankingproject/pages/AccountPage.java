@@ -1,25 +1,21 @@
 package org.simbirsoft.bankingproject.pages;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.How;
 
-@RequiredArgsConstructor
-public class AccountPage {
-    private final WebDriver webDriver;
+@Getter
+public class AccountPage extends BasePage {
+    @FindBy(how = How.XPATH, using = "//button[contains(text(),'Deposit')]")
+    private WebElement depositButton;
 
-    public WebElement depositButton() {
-        return webDriver.findElement(By.xpath("//button[contains(text(),'Deposit')]"));
-    }
+    @FindBy(how = How.XPATH, using = "//button[contains(text(),'Withdrawl')]")
+    private WebElement withdrawlButton;
 
-    public WebElement withdrawlButton() {
-        return webDriver.findElement(By.xpath("//button[contains(text(),'Withdrawl')]"));
-    }
-
-    public WebElement transactionsButton() {
-        return webDriver.findElement(By.xpath("//button[contains(text(),'Transactions')]"));
-    }
+    @FindBy(how = How.XPATH, using = "//button[contains(text(),'Transactions')]")
+    private WebElement transactionsButton;
 
     public int balance() {
         return Integer.parseInt(webDriver.findElements(By.xpath("//div[@ng-hide='noAccount']//strong[@class='ng-binding']")).get(1).getText());
