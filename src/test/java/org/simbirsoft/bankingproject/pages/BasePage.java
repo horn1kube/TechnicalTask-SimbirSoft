@@ -10,10 +10,12 @@ import org.simbirsoft.bankingproject.locators.SelectTypeFieldDecorator;
 
 public abstract class BasePage<T extends LoadableComponent<T>> extends LoadableComponent<T> {
     protected WebDriver webDriver;
+
     protected BasePage(WebDriver webDriver) {
         init(webDriver);
         get();
     }
+
     public void init(final WebDriver driver) {
         this.webDriver = driver;
         PageFactory.initElements(driver, this);

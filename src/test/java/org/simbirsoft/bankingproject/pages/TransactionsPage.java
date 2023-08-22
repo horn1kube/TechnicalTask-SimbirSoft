@@ -1,12 +1,9 @@
 package org.simbirsoft.bankingproject.pages;
 
 import lombok.Getter;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.How;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.simbirsoft.bankingproject.locators.annocations.FindTableBy;
 import org.simbirsoft.bankingproject.model.Transaction;
@@ -46,7 +43,7 @@ public class TransactionsPage extends BasePage<TransactionsPage> {
     }
 
     @Override
-    protected void isLoaded() throws Error {
-        new WebDriverWait(webDriver, Duration.ofSeconds(5)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//table//tbody//tr")));
+    protected void isLoaded() {
+        new WebDriverWait(webDriver, Duration.ofSeconds(5)).until(driver -> transactionsTableRows);
     }
 }

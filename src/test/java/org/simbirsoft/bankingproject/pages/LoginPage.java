@@ -26,7 +26,6 @@ public class LoginPage extends BasePage<LoginPage> {
 
     @Override
     protected void isLoaded() throws Error {
-        new WebDriverWait(webDriver, Duration.ofSeconds(3))
-                .until(ExpectedConditions.visibilityOf(customerLoginButton));
+        new WebDriverWait(webDriver, Duration.ofSeconds(3)).until(ExpectedConditions.visibilityOf(customerLoginButton));
     }
 }
