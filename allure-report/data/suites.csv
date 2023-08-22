@@ -1,0 +1,5 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Wed Aug 23 01:15:51 MSK 2023","Wed Aug 23 01:15:53 MSK 2023","1554","","org.simbirsoft.bankingproject.LoginTest","","org.simbirsoft.bankingproject.LoginTest","transactionsTest","transactionsTest()","Transactions successfully received"
+"passed","Wed Aug 23 01:15:50 MSK 2023","Wed Aug 23 01:15:50 MSK 2023","670","","org.simbirsoft.bankingproject.LoginTest","","org.simbirsoft.bankingproject.LoginTest","depositTest","depositTest()","Successful deposit"
+"passed","Wed Aug 23 01:15:45 MSK 2023","Wed Aug 23 01:15:50 MSK 2023","4207","","org.simbirsoft.bankingproject.LoginTest","","org.simbirsoft.bankingproject.LoginTest","customerLoginTest","customerLoginTest()","Valid login"
+"passed","Wed Aug 23 01:15:50 MSK 2023","Wed Aug 23 01:15:51 MSK 2023","988","","org.simbirsoft.bankingproject.LoginTest","","org.simbirsoft.bankingproject.LoginTest","withdrawlTest","withdrawlTest()","Successful withdraw"

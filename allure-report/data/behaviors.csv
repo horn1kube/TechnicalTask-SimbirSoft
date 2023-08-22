@@ -1,0 +1,5 @@
+"Epic","Feature","Story","FAILED","BROKEN","PASSED","SKIPPED","UNKNOWN"
+"Login Tests Epic","Valid Harry Potter login","Harry Potter tries to get all transactions in account","0","0","1","0","0"
+"Login Tests Epic","Valid Harry Potter login","Harry Potter tries to deposit fibonacci number","0","0","1","0","0"
+"Login Tests Epic","Valid Harry Potter login","Harry Potter tries to login","0","0","1","0","0"
+"Login Tests Epic","Valid Harry Potter login","Harry Potter tries to withdraw fibonacci number","0","0","1","0","0"
