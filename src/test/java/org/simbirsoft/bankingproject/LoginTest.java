@@ -4,13 +4,11 @@ import io.qameta.allure.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.simbirsoft.bankingproject.config.SeleniumConfig;
 import org.simbirsoft.bankingproject.model.Transaction;
 import org.simbirsoft.bankingproject.pages.AccountPage;
@@ -95,7 +93,7 @@ public class LoginTest {
         accountPage.getFormAmountInput().sendKeys(String.valueOf(fibonacci));
         Allure.step("Нажатие submit-кнопки \"Deposit\"");
         accountPage.getFormSubmitButton().click();
-        wait.until(ExpectedConditions.textToBePresentInElement(accountPage.getBalance(),String.valueOf(fibonacci)));
+        wait.until(ExpectedConditions.textToBePresentInElement(accountPage.getBalance(), String.valueOf(fibonacci)));
     }
 
     @Step("Вычисление {dayOfMonth} числа Фибоначчи ")
@@ -122,7 +120,7 @@ public class LoginTest {
         accountPage.getFormAmountInput().sendKeys(String.valueOf(fibonacci));
         Allure.step("Нажатие submit-кнопки \"Withdraw\"");
         accountPage.getFormSubmitButton().click();
-        wait.until(ExpectedConditions.textToBePresentInElement(accountPage.getBalance(),"0"));
+        wait.until(ExpectedConditions.textToBePresentInElement(accountPage.getBalance(), "0"));
     }
 
     @Test
