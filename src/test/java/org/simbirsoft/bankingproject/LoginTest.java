@@ -4,11 +4,14 @@ import io.qameta.allure.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.simbirsoft.bankingproject.config.SeleniumConfig;
-import org.simbirsoft.bankingproject.forms.DepositForm;
-import org.simbirsoft.bankingproject.forms.WithdrawlForm;
 import org.simbirsoft.bankingproject.model.Transaction;
 import org.simbirsoft.bankingproject.pages.AccountPage;
 import org.simbirsoft.bankingproject.pages.CustomerLoginPage;
@@ -22,7 +25,9 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.MethodOrderer.*;
 
 
@@ -33,12 +38,13 @@ public class LoginTest {
     private static WebDriver chromeDriver;
     private static int fibonacci;
     private static List<Transaction> transactions;
+    public static Wait<WebDriver> wait;
 
     @BeforeAll
     public static void setUp() throws MalformedURLException {
         chromeDriver = new RemoteWebDriver(new URL(SeleniumConfig.SELENIUM_GRID_HUB_URL), new ChromeOptions());
-        chromeDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
-        chromeDriver.manage().timeouts().scriptTimeout(Duration.ofSeconds(10));
+        chromeDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(20));
+        chromeDriver.manage().timeouts().scriptTimeout(Duration.ofSeconds(20));
         chromeDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
         chromeDriver.manage().window().maximize();
     }
@@ -52,69 +58,58 @@ public class LoginTest {
     @Order(1)
     @Story("Harry Potter tries to login")
     @Description("Valid login")
-    public void customerLoginTest() throws InterruptedException {
+    public void customerLoginTest() {
+        wait = new FluentWait<>(chromeDriver)
+                .withTimeout(Duration.ofSeconds(5))
+                .pollingEvery(Duration.ofSeconds(1))
+                .ignoring(NoSuchElementException.class);
         chromeDriver.get(SeleniumConfig.LOGIN_PAGE_URL);
-        Thread.sleep(3000);
-        LoginPage loginPage = new LoginPage();
-        loginPage.init(chromeDriver);
+        LoginPage loginPage = new LoginPage(chromeDriver);
         loginPage.getCustomerLoginButton().click();
-        Thread.sleep(3000);
-        Assertions.assertThat(chromeDriver.getCurrentUrl()).isEqualTo("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/customer");
-        CustomerLoginPage customerLoginPage = new CustomerLoginPage();
-        customerLoginPage.init(chromeDriver);
-        customerLoginPage.selectCustomerButton().selectByVisibleText("Harry Potter");
-        Thread.sleep(3000);
+        wait.until(ExpectedConditions.urlToBe("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/customer"));
+        CustomerLoginPage customerLoginPage = new CustomerLoginPage(chromeDriver);
+        customerLoginPage.getSelectCustomerButton().selectByVisibleText("Harry Potter");
         customerLoginPage.getLoginButton().click();
-        Thread.sleep(3000);
-        Assertions.assertThat(chromeDriver.getCurrentUrl()).isEqualTo("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/account");
+        wait.until(ExpectedConditions.urlToBe("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/account"));
     }
 
     @Test
     @Order(2)
     @Story("Harry Potter tries to deposit fibonacci number")
     @Description("Successful deposit")
-    public void depositTest() throws InterruptedException {
-        AccountPage accountPage = new AccountPage();
-        accountPage.init(chromeDriver);
+    public void depositTest() {
+        AccountPage accountPage = new AccountPage(chromeDriver);
         accountPage.getDepositButton().click();
-        Thread.sleep(3000);
-        DepositForm depositForm = new DepositForm(chromeDriver);
+        accountPage.isDepositFormLoaded();
         int dayOfMonth = LocalDateTime.now().getDayOfMonth();
         fibonacci = fib(dayOfMonth);
-        depositForm.getAmountInput().sendKeys(String.valueOf(fibonacci));
-        depositForm.getDepositButton().click();
-        Thread.sleep(3000);
-        Assertions.assertThat(accountPage.balance()).isEqualTo(fibonacci);
+        accountPage.getFormAmountInput().sendKeys(String.valueOf(fibonacci));
+        accountPage.getFormSubmitButton().click();
+        wait.until(ExpectedConditions.textToBePresentInElement(accountPage.getBalance(),String.valueOf(fibonacci)));
     }
 
     @Test
     @Order(3)
     @Story("Harry Potter tries to withdraw fibonacci number")
     @Description("Successful withdraw")
-    public void withdrawlTest() throws InterruptedException {
-        AccountPage accountPage = new AccountPage();
-        accountPage.init(chromeDriver);
+    public void withdrawlTest() {
+        AccountPage accountPage = new AccountPage(chromeDriver);
         accountPage.getWithdrawlButton().click();
-        Thread.sleep(3000);
-        WithdrawlForm withdrawlForm = new WithdrawlForm(chromeDriver);
-        withdrawlForm.getAmountInput().sendKeys(String.valueOf(fibonacci));
-        withdrawlForm.getWithdrawlButton().click();
-        Thread.sleep(3000);
-        Assertions.assertThat(accountPage.balance()).isEqualTo(0);
+        accountPage.isWithdrawlFormLoaded();
+        accountPage.getFormAmountInput().sendKeys(String.valueOf(fibonacci));
+        accountPage.getFormSubmitButton().click();
+        wait.until(ExpectedConditions.textToBePresentInElement(accountPage.getBalance(),"0"));
     }
 
     @Test
     @Order(4)
     @Story("Harry Potter tries to get all transactions in account")
     @Description("Transactions successfully received")
-    public void transactionsTest() throws InterruptedException, IOException {
-        AccountPage accountPage = new AccountPage();
-        accountPage.init(chromeDriver);
+    public void transactionsTest() throws IOException {
+        AccountPage accountPage = new AccountPage(chromeDriver);
         accountPage.getTransactionsButton().click();
-        Thread.sleep(3000);
-        Assertions.assertThat(chromeDriver.getCurrentUrl()).isEqualTo("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/listTx");
-        TransactionsPage transactionsPage = new TransactionsPage();
-        transactionsPage.init(chromeDriver);
+        wait.until(ExpectedConditions.urlToBe("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/listTx"));
+        TransactionsPage transactionsPage = new TransactionsPage(chromeDriver);
         transactions = transactionsPage.transactions();
         Assertions.assertThat(transactions).hasSize(2);
         transactionsListAttachment();
