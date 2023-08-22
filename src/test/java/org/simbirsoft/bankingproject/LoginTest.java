@@ -63,14 +63,34 @@ public class LoginTest {
                 .withTimeout(Duration.ofSeconds(5))
                 .pollingEvery(Duration.ofSeconds(1))
                 .ignoring(NoSuchElementException.class);
-        chromeDriver.get(SeleniumConfig.LOGIN_PAGE_URL);
-        LoginPage loginPage = new LoginPage(chromeDriver);
-        loginPage.getCustomerLoginButton().click();
+        LoginPage loginPage = loadPage();
+        Allure.step("Нажатие кнопки \"Customer Login\"");
+        clickCustomerLoginButton(loginPage);
         wait.until(ExpectedConditions.urlToBe("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/customer"));
         CustomerLoginPage customerLoginPage = new CustomerLoginPage(chromeDriver);
-        customerLoginPage.getSelectCustomerButton().selectByVisibleText("Harry Potter");
-        customerLoginPage.getLoginButton().click();
+        Allure.step("Выбор аккаунта \"Harry Potter\"");
+        selectHarryPotterAccount(customerLoginPage);
+        Allure.step("Нажатие кнопки \"Login\"");
+        clickLoginButton(customerLoginPage);
         wait.until(ExpectedConditions.urlToBe("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/account"));
+    }
+
+    @Step("Загрузка страницы " + SeleniumConfig.LOGIN_PAGE_URL)
+    public LoginPage loadPage() {
+        chromeDriver.get(SeleniumConfig.LOGIN_PAGE_URL);
+        return new LoginPage(chromeDriver);
+    }
+
+    public void clickCustomerLoginButton(LoginPage loginPage) {
+        loginPage.getCustomerLoginButton().click();
+    }
+
+    public void selectHarryPotterAccount(CustomerLoginPage customerLoginPage) {
+        customerLoginPage.getSelectCustomerButton().selectByVisibleText("Harry Potter");
+    }
+
+    public void clickLoginButton(CustomerLoginPage customerLoginPage) {
+        customerLoginPage.getLoginButton().click();
     }
 
     @Test
