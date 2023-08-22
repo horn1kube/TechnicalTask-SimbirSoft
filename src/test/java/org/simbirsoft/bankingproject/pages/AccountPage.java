@@ -1,5 +1,6 @@
 package org.simbirsoft.bankingproject.pages;
 
+import io.qameta.allure.Step;
 import lombok.Getter;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -49,6 +50,7 @@ public class AccountPage extends BasePage<AccountPage> {
                 ));
     }
 
+    @Step("Проверка, прогружена ли форма снятия")
     public void isWithdrawlFormLoaded() {
         new WebDriverWait(webDriver, Duration.ofSeconds(3))
                 .until(ExpectedConditions.and(
@@ -58,6 +60,7 @@ public class AccountPage extends BasePage<AccountPage> {
                 ));
     }
 
+    @Step("Проверка, прогружена ли форма депозита")
     public void isDepositFormLoaded() {
         new WebDriverWait(webDriver, Duration.ofSeconds(3))
                 .until(ExpectedConditions.and(

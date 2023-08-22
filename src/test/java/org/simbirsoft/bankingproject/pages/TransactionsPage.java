@@ -1,9 +1,11 @@
 package org.simbirsoft.bankingproject.pages;
 
+import io.qameta.allure.Step;
 import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -23,10 +25,14 @@ public class TransactionsPage extends BasePage<TransactionsPage> {
     @FindTableBy(how = How.XPATH, using = "//table//tbody//tr")
     private List<List<WebElement>> transactionsTableRows;
 
+    @FindBy(how = How.XPATH, using = "//button[contains(text(),'Back')]")
+    private WebElement backButton;
+
     public TransactionsPage(WebDriver webDriver) {
         super(webDriver);
     }
 
+    @Step("Получение транзакций")
     public List<Transaction> transactions() {
         return transactionsTableRows.stream().map((elem) -> {
             List<String> row = elem.stream().map(WebElement::getText).toList();
@@ -44,8 +50,9 @@ public class TransactionsPage extends BasePage<TransactionsPage> {
 
     }
 
+    @Step("Ожидание загрузки страницы с транзакциями")
     @Override
     protected void isLoaded() {
-        new WebDriverWait(webDriver, Duration.ofSeconds(5)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//table//tbody//tr")));
+        new WebDriverWait(webDriver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(backButton));
     }
 }

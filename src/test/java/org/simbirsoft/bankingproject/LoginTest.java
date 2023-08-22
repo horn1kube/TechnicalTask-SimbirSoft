@@ -65,32 +65,20 @@ public class LoginTest {
                 .ignoring(NoSuchElementException.class);
         LoginPage loginPage = loadPage();
         Allure.step("Нажатие кнопки \"Customer Login\"");
-        clickCustomerLoginButton(loginPage);
+        loginPage.getCustomerLoginButton().click();
         wait.until(ExpectedConditions.urlToBe("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/customer"));
         CustomerLoginPage customerLoginPage = new CustomerLoginPage(chromeDriver);
         Allure.step("Выбор аккаунта \"Harry Potter\"");
-        selectHarryPotterAccount(customerLoginPage);
+        customerLoginPage.getSelectCustomerButton().selectByVisibleText("Harry Potter");
         Allure.step("Нажатие кнопки \"Login\"");
-        clickLoginButton(customerLoginPage);
+        customerLoginPage.getLoginButton().click();
         wait.until(ExpectedConditions.urlToBe("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/account"));
     }
 
     @Step("Загрузка страницы " + SeleniumConfig.LOGIN_PAGE_URL)
-    public LoginPage loadPage() {
+    private LoginPage loadPage() {
         chromeDriver.get(SeleniumConfig.LOGIN_PAGE_URL);
         return new LoginPage(chromeDriver);
-    }
-
-    public void clickCustomerLoginButton(LoginPage loginPage) {
-        loginPage.getCustomerLoginButton().click();
-    }
-
-    public void selectHarryPotterAccount(CustomerLoginPage customerLoginPage) {
-        customerLoginPage.getSelectCustomerButton().selectByVisibleText("Harry Potter");
-    }
-
-    public void clickLoginButton(CustomerLoginPage customerLoginPage) {
-        customerLoginPage.getLoginButton().click();
     }
 
     @Test
@@ -99,14 +87,27 @@ public class LoginTest {
     @Description("Successful deposit")
     public void depositTest() {
         AccountPage accountPage = new AccountPage(chromeDriver);
+        Allure.step("Нажатие кнопки \"Deposit\"");
         accountPage.getDepositButton().click();
         accountPage.isDepositFormLoaded();
-        int dayOfMonth = LocalDateTime.now().getDayOfMonth();
-        fibonacci = fib(dayOfMonth);
+        fibonacci = countFibonacciNumber(getDayOfMonth());
+        Allure.step(String.format("Ввод %d в поле amount", fibonacci));
         accountPage.getFormAmountInput().sendKeys(String.valueOf(fibonacci));
+        Allure.step("Нажатие submit-кнопки \"Deposit\"");
         accountPage.getFormSubmitButton().click();
         wait.until(ExpectedConditions.textToBePresentInElement(accountPage.getBalance(),String.valueOf(fibonacci)));
     }
+
+    @Step("Вычисление {dayOfMonth} числа Фибоначчи ")
+    private int countFibonacciNumber(int dayOfMonth) {
+        return fib(dayOfMonth);
+    }
+
+    @Step("Получение текущего дня в месяце")
+    private int getDayOfMonth() {
+        return LocalDateTime.now().getDayOfMonth();
+    }
+
 
     @Test
     @Order(3)
@@ -114,9 +115,12 @@ public class LoginTest {
     @Description("Successful withdraw")
     public void withdrawlTest() {
         AccountPage accountPage = new AccountPage(chromeDriver);
+        Allure.step("Нажатие кнопки \"Withdrawl\"");
         accountPage.getWithdrawlButton().click();
         accountPage.isWithdrawlFormLoaded();
+        Allure.step(String.format("Ввод %d в поле amount", fibonacci));
         accountPage.getFormAmountInput().sendKeys(String.valueOf(fibonacci));
+        Allure.step("Нажатие submit-кнопки \"Withdraw\"");
         accountPage.getFormSubmitButton().click();
         wait.until(ExpectedConditions.textToBePresentInElement(accountPage.getBalance(),"0"));
     }
@@ -127,14 +131,21 @@ public class LoginTest {
     @Description("Transactions successfully received")
     public void transactionsTest() throws IOException {
         AccountPage accountPage = new AccountPage(chromeDriver);
+        Allure.step("Нажатие кнопки \"Transactions\"");
         accountPage.getTransactionsButton().click();
         wait.until(ExpectedConditions.urlToBe("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/listTx"));
         TransactionsPage transactionsPage = new TransactionsPage(chromeDriver);
         transactions = transactionsPage.transactions();
-        Assertions.assertThat(transactions).hasSize(2);
+        checkCountOfTransactions(transactions, 2);
         transactionsListAttachment();
     }
 
+    @Step("Проверка, что количество транзакций равно {expected}")
+    private void checkCountOfTransactions(List<Transaction> transactions, int expected) {
+        Assertions.assertThat(transactions).hasSize(expected);
+    }
+
+    @Step("Прикрепление csv-файла с транзакциями")
     @Attachment(value = "Transactions list", type = "text/csv", fileExtension = ".csv")
     public String transactionsListAttachment() throws IOException {
         return Files.writeTransactionsInCSV(transactions);
