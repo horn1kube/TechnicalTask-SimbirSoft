@@ -11,7 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.simbirsoft.bankingproject.config.SeleniumConfig;
 
 @Getter
-public class LoginPage extends BasePage<LoginPage> {
+public class LoginPage extends BasePage {
     @FindBy(how = How.XPATH, using = "//button[contains(text(),'Customer Login')]")
     private WebElement customerLoginButton;
 

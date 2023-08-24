@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import static org.simbirsoft.bankingproject.config.SeleniumConfig.DEFAULT_POLLING_DURATION;
 import static org.simbirsoft.bankingproject.config.SeleniumConfig.DEFAULT_WAIT_TIMEOUT;
 
-public class AccountPage extends BasePage<AccountPage> {
+public class AccountPage extends BasePage {
     @FindBy(how = How.XPATH, using = "//button[contains(text(),'Deposit')]")
     private WebElement depositButton;
 

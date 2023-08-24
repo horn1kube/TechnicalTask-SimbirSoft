@@ -23,7 +23,7 @@ import java.util.Locale;
 import static org.simbirsoft.bankingproject.config.SeleniumConfig.DEFAULT_POLLING_DURATION;
 
 @Getter
-public class TransactionsPage extends BasePage<TransactionsPage> {
+public class TransactionsPage extends BasePage {
 
     @FindTableBy(how = How.XPATH, using = "//table//tbody//tr")
     private List<List<WebElement>> transactionsTableRows;

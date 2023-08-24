@@ -13,7 +13,7 @@ import org.simbirsoft.bankingproject.config.SeleniumConfig;
 import org.simbirsoft.bankingproject.model.Customer;
 
 @Getter
-public class CustomerLoginPage extends BasePage<CustomerLoginPage> {
+public class CustomerLoginPage extends BasePage {
 
     @FindBy(how = How.XPATH, using = "//button[contains(text(),'Login')]")
     private WebElement loginButton;
