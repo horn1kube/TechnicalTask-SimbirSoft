@@ -1,5 +1,6 @@
 package org.simbirsoft.bankingproject.pages;
 
+import io.qameta.allure.Step;
 import lombok.Getter;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,8 +9,8 @@ import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
+import org.simbirsoft.bankingproject.config.SeleniumConfig;
+import org.simbirsoft.bankingproject.model.Customer;
 
 @Getter
 public class CustomerLoginPage extends BasePage<CustomerLoginPage> {
@@ -31,7 +32,7 @@ public class CustomerLoginPage extends BasePage<CustomerLoginPage> {
 
     @Override
     protected void isLoaded() throws Error {
-        new WebDriverWait(webDriver, Duration.ofSeconds(3))
+        new WebDriverWait(webDriver, SeleniumConfig.DEFAULT_WAIT_TIMEOUT)
                 .until(ExpectedConditions.or(
                         ExpectedConditions.and(
                                 ExpectedConditions.visibilityOf(selectCustomerButton.getWrappedElement()),
@@ -40,5 +41,15 @@ public class CustomerLoginPage extends BasePage<CustomerLoginPage> {
                                 ExpectedConditions.visibilityOf(loginButton),
                                 ExpectedConditions.visibilityOf(selectCustomerButton.getWrappedElement()))
                 ));
+    }
+
+    @Step("Выбор аккаунта \"{customer}\"")
+    public void selectCustomer(Customer customer) {
+        selectCustomerButton.selectByVisibleText(customer.toString());
+    }
+
+    @Step("Нажатие кнопки \"Login\"")
+    public void clickLoginButton() {
+        loginButton.click();
     }
 }

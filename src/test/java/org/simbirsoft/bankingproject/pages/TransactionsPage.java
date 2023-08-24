@@ -2,17 +2,19 @@ package org.simbirsoft.bankingproject.pages;
 
 import io.qameta.allure.Step;
 import lombok.Getter;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.simbirsoft.bankingproject.config.SeleniumConfig;
 import org.simbirsoft.bankingproject.locators.annocations.FindTableBy;
 import org.simbirsoft.bankingproject.model.Transaction;
 import org.simbirsoft.bankingproject.model.TransactionType;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -52,6 +54,17 @@ public class TransactionsPage extends BasePage<TransactionsPage> {
     @Step("Ожидание загрузки страницы с транзакциями")
     @Override
     protected void isLoaded() {
-        new WebDriverWait(webDriver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(backButton));
+        new WebDriverWait(webDriver, SeleniumConfig.DEFAULT_WAIT_TIMEOUT).until(ExpectedConditions.and(
+                ExpectedConditions.visibilityOf(backButton)));
+    }
+
+    @Step("Ожидание загрузки минимум {count} транзакций")
+    public void isTransactionsLoaded(int count) {
+        new WebDriverWait(webDriver, SeleniumConfig.DEFAULT_WAIT_TIMEOUT).until((webDriver) -> {
+            webDriver.navigate().refresh();
+            new WebDriverWait(webDriver, SeleniumConfig.DEFAULT_WAIT_TIMEOUT).until(
+                    driver -> ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete"));
+            return webDriver.findElements(By.xpath("//table//tbody//tr")).size() >= count;
+        });
     }
 }

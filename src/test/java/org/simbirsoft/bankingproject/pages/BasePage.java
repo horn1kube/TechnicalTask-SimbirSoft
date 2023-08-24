@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.LoadableComponent;
 import org.simbirsoft.bankingproject.locators.FindTableByAnnotationFieldDecorator;
 import org.simbirsoft.bankingproject.locators.SelectTypeFieldDecorator;
 
-public abstract class BasePage<T extends LoadableComponent<T>> extends LoadableComponent<T> {
+public abstract class BasePage<T extends BasePage<T>> extends LoadableComponent<T> {
     protected WebDriver webDriver;
 
     protected BasePage(WebDriver webDriver) {

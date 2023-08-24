@@ -1,17 +1,17 @@
 package org.simbirsoft.bankingproject.pages;
 
 import io.qameta.allure.Step;
-import lombok.Getter;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
+import static org.simbirsoft.bankingproject.config.SeleniumConfig.DEFAULT_POLLING_DURATION;
+import static org.simbirsoft.bankingproject.config.SeleniumConfig.DEFAULT_WAIT_TIMEOUT;
 
-@Getter
 public class AccountPage extends BasePage<AccountPage> {
     @FindBy(how = How.XPATH, using = "//button[contains(text(),'Deposit')]")
     private WebElement depositButton;
@@ -42,7 +42,7 @@ public class AccountPage extends BasePage<AccountPage> {
 
     @Override
     protected void isLoaded() throws Error {
-        new WebDriverWait(webDriver, Duration.ofSeconds(3))
+        new WebDriverWait(webDriver, DEFAULT_WAIT_TIMEOUT)
                 .until(ExpectedConditions.and(
                         ExpectedConditions.visibilityOf(withdrawlButton),
                         ExpectedConditions.visibilityOf(depositButton),
@@ -52,7 +52,7 @@ public class AccountPage extends BasePage<AccountPage> {
 
     @Step("Проверка, прогружена ли форма снятия")
     public void isWithdrawlFormLoaded() {
-        new WebDriverWait(webDriver, Duration.ofSeconds(3))
+        new WebDriverWait(webDriver, DEFAULT_WAIT_TIMEOUT)
                 .until(ExpectedConditions.and(
                         ExpectedConditions.visibilityOf(formAmountInput),
                         ExpectedConditions.visibilityOf(formSubmitButton),
@@ -62,11 +62,68 @@ public class AccountPage extends BasePage<AccountPage> {
 
     @Step("Проверка, прогружена ли форма депозита")
     public void isDepositFormLoaded() {
-        new WebDriverWait(webDriver, Duration.ofSeconds(3))
+        new WebDriverWait(webDriver, DEFAULT_WAIT_TIMEOUT)
                 .until(ExpectedConditions.and(
                         ExpectedConditions.visibilityOf(formAmountInput),
                         ExpectedConditions.visibilityOf(formSubmitButton),
                         ExpectedConditions.textToBePresentInElement(formSubmitButton, "Deposit")
                 ));
+    }
+
+    @Step("Нажатие кнопки \"Deposit\"")
+    public void clickDepositButton() {
+        depositButton.click();
+    }
+
+    @Step("Ввод {amount} в поле amount")
+    public void setFormAmount(int amount) {
+        formAmountInput.sendKeys(String.valueOf(amount));
+    }
+
+    @Step("Нажатие submit-кнопки")
+    public void clickSubmitButton() {
+        formSubmitButton.click();
+    }
+
+    @Step("Нажатие кнопки \"Withdrawl\"")
+    public void clickWithdrawlButton() {
+        withdrawlButton.click();
+    }
+
+    @Step("Нажатие кнопки \"Transactions\"")
+    public void clickTransactionsButton() {
+        transactionsButton.click();
+    }
+
+    @Step("Депозит {value} на счёт")
+    public void deposit(int value) {
+        int moneyBefore = getBalance();
+        clickDepositButton();
+        isDepositFormLoaded();
+        setFormAmount(value);
+        clickSubmitButton();
+        FluentWait<AccountPage> wait = new FluentWait<>(this)
+                .withTimeout(DEFAULT_WAIT_TIMEOUT)
+                .pollingEvery(DEFAULT_POLLING_DURATION)
+                .ignoring(IllegalStateException.class);
+        wait.until((page) -> page.getBalance() == moneyBefore + value);
+    }
+
+    @Step("Снятие {value} со счёта")
+    public void withdraw(int value) {
+        int moneyBefore = getBalance();
+        clickWithdrawlButton();
+        isWithdrawlFormLoaded();
+        setFormAmount(value);
+        clickSubmitButton();
+        FluentWait<AccountPage> wait = new FluentWait<>(this)
+                .withTimeout(DEFAULT_WAIT_TIMEOUT)
+                .pollingEvery(DEFAULT_POLLING_DURATION)
+                .ignoring(IllegalStateException.class);
+        wait.until((page) -> page.getBalance() == moneyBefore - value);
+    }
+
+    public int getBalance() {
+        return Integer.parseInt(balance.getText());
     }
 }
