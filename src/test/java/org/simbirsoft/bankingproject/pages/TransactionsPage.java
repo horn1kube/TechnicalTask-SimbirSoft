@@ -20,6 +20,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
+import static org.simbirsoft.bankingproject.config.SeleniumConfig.DEFAULT_POLLING_DURATION;
+
 @Getter
 public class TransactionsPage extends BasePage<TransactionsPage> {
 
@@ -60,10 +62,10 @@ public class TransactionsPage extends BasePage<TransactionsPage> {
 
     @Step("Ожидание загрузки минимум {count} транзакций")
     public void isTransactionsLoaded(int count) {
-        new WebDriverWait(webDriver, SeleniumConfig.DEFAULT_WAIT_TIMEOUT).until((webDriver) -> {
+        new WebDriverWait(webDriver, SeleniumConfig.DEFAULT_WAIT_TIMEOUT).pollingEvery(DEFAULT_POLLING_DURATION).until((webDriver) -> {
             webDriver.navigate().refresh();
-            new WebDriverWait(webDriver, SeleniumConfig.DEFAULT_WAIT_TIMEOUT).until(
-                    driver -> ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete"));
+            new WebDriverWait(webDriver, SeleniumConfig.DEFAULT_WAIT_TIMEOUT).pollingEvery(DEFAULT_POLLING_DURATION)
+                    .until(driver -> ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete"));
             return webDriver.findElements(By.xpath("//table//tbody//tr")).size() >= count;
         });
     }
